@@ -8,6 +8,11 @@ public class FindAddressCandidateUrlBuilder {
 
     private Uri.Builder findAddressUriBuilder;
     private String findAddressURL;
+    private String countryCode;
+    private String singleLine;
+    private String magicKey;
+    private String outField;
+    private String f;
 
     public FindAddressCandidateUrlBuilder() {
         findAddressUriBuilder = new Uri.Builder();
@@ -24,6 +29,12 @@ public class FindAddressCandidateUrlBuilder {
     }
 
     public String getFindAddressURL() {
+        getFindAddressUriBuilder().appendQueryParameter(Constants.MAGIC_KEY, magicKey);
+        getFindAddressUriBuilder().appendQueryParameter(Constants.OUTFIELDS, outField);
+        getFindAddressUriBuilder().appendQueryParameter(Constants.F, Constants.F_JSON);
+        getFindAddressUriBuilder().appendQueryParameter(Constants.COUNTRY_CODE, countryCode);
+        getFindAddressUriBuilder().appendQueryParameter(Constants.SINGLE_LINE, singleLine);
+        findAddressURL = findAddressUriBuilder.build().toString();
         return findAddressURL;
     }
 
@@ -32,23 +43,23 @@ public class FindAddressCandidateUrlBuilder {
     }
 
     public void setMagicKey(String magicKey) {
-        getFindAddressUriBuilder().appendQueryParameter(Constants.MAGIC_KEY, magicKey);
+        this.magicKey = magicKey;
     }
 
     public void setSingleLine(String singleLine) {
-        getFindAddressUriBuilder().appendQueryParameter(Constants.SINGLE_LINE, singleLine);
+        this.singleLine = singleLine;
     }
 
     public void setOutField(String outField) {
-        getFindAddressUriBuilder().appendQueryParameter(Constants.OUTFIELDS, outField);
+        this.outField = outField;
     }
 
     public void setF(String f) {
-        getFindAddressUriBuilder().appendQueryParameter(Constants.F, Constants.F_JSON);
+        this.f = f;
     }
 
     public void setCountryCode(String countryCode) {
-        getFindAddressUriBuilder().appendQueryParameter(Constants.COUNTRY_CODE, countryCode);
+        this.countryCode = countryCode;
     }
 
 
