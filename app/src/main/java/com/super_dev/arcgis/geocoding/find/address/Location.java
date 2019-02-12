@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+// x is longitude and y is latitude
 
 public class Location implements Parcelable
 {

@@ -16,6 +16,11 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.super_dev.arcgis.geocoder.android.client.adapter.SuggestAdapter;
+import com.super_dev.arcgis.geocoding.find.address.Attributes;
+import com.super_dev.arcgis.geocoding.find.address.Candidate;
+import com.super_dev.arcgis.geocoding.find.address.Extent;
+import com.super_dev.arcgis.geocoding.find.address.FindAddressCandidateUrlBuilder;
+import com.super_dev.arcgis.geocoding.find.address.Location;
 import com.super_dev.arcgis.geocoding.operator.ApiCall;
 import com.super_dev.arcgis.geocoding.suggestion.Suggestion;
 import com.super_dev.arcgis.geocoding.suggestion.SuggestionUrlBuilder;
@@ -47,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
         suggestionUrlBuilder.setCountryCode("SN");
         suggestionUrlBuilder.setF("json");
 
+        final FindAddressCandidateUrlBuilder addressCandidateUrlBuilder = new FindAddressCandidateUrlBuilder();
+        addressCandidateUrlBuilder.setCountryCode("SN");
+        addressCandidateUrlBuilder.setF("json");
+        addressCandidateUrlBuilder.setOutField("Match_addr,Addr_type");
+
         //Setting up the adapter for AutoSuggest
         suggestAdapter = new SuggestAdapter(this,
                 android.R.layout.simple_dropdown_item_1line);
@@ -57,6 +67,12 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 autoCompleteTextView.setText(suggestAdapter.getItem(i).getText());
                 selectedText.setText(suggestAdapter.getItem(i).getText());
+                addressCandidateUrlBuilder.setMagicKey(suggestAdapter.getItem(i).getMagicKey());
+                addressCandidateUrlBuilder.setSingleLine(suggestAdapter.getItem(i).getText());
+                String findAddressUrl = addressCandidateUrlBuilder.getFindAddressURL();
+                Log.e("FIND_ADDRESS",findAddressUrl);
+                makeFindAddressCandidates(findAddressUrl);
+
             }
         });
 
@@ -129,6 +145,70 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("API", "Err" + error.getLocalizedMessage());
+            }
+        });
+    }
+
+    private void makeFindAddressCandidates(String url) {
+        ApiCall.make(this, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                List<Candidate> candidateList = new ArrayList<>();
+
+                try {
+                    JSONArray candidates = response.getJSONArray("candidates");
+                    for (int i = 0; i < candidates.length(); i ++ ) {
+                        JSONObject result = candidates.getJSONObject(i);
+                        String result_address = result.getString("address");
+                        JSONObject result_location = result.getJSONObject("location");
+//                        Longitude
+                        Double result_location_x = result_location.getDouble("x");
+//                        Latitude
+                        Double result_location_y = result_location.getDouble("y");
+                        Location location = new Location();
+                        location.setX(result_location_x);
+                        location.setY(result_location_y);
+//                        Score
+                        int result_score = result.getInt("score");
+//                        Attributes
+                        JSONObject result_attributes = result.getJSONObject("attributes");
+                        String result_attributes_matchAdress = result_attributes.getString("Match_addr");
+                        String result_attributes_adressType = result_attributes.getString("Addr_type");
+                        Attributes attributes = new Attributes();
+                        attributes.setAddrType(result_attributes_adressType);
+                        attributes.setMatchAddr(result_attributes_matchAdress);
+//                        Extent
+                        JSONObject result_extent = result.getJSONObject("extent");
+                        Double result_extent_xmin = result_extent.getDouble("xmin");
+                        Double result_extent_ymin = result_extent.getDouble("ymin");
+                        Double result_extent_xmax = result_extent.getDouble("xmax");
+                        Double result_extent_ymax = result_extent.getDouble("ymax");
+                        Extent extent = new Extent();
+                        extent.setXmax(result_extent_xmax);
+                        extent.setXmin(result_extent_xmin);
+                        extent.setYmax(result_extent_ymax);
+                        extent.setYmin(result_extent_ymin);
+
+//                        Initiliaze Candidate
+                        Candidate candidate = new Candidate();
+                        candidate.setAddress(result_address);
+                        candidate.setAttributes(attributes);
+                        candidate.setLocation(location);
+                        candidate.setScore(result_score);
+                        candidate.setExtent(extent);
+
+                        candidateList.add(candidate);
+
+                    }
+
+                } catch (JSONException e) {
+                    Log.v("JSON", "EXC: " + e.getLocalizedMessage());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
             }
         });
     }
