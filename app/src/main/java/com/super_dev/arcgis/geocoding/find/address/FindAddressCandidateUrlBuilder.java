@@ -25,6 +25,12 @@ public class FindAddressCandidateUrlBuilder {
                 .appendPath(Constants.PATH5)
                 .appendPath(Constants.FINDADDRESS_PATH);
 
+        setCountryCode("");
+        setMagicKey("");
+        setOutField("");
+        setSingleLine("");
+        setF("");
+
         findAddressURL = findAddressUriBuilder.build().toString();
     }
 
