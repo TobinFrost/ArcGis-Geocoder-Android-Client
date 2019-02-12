@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ArcGis Geocoder Android Client</string>
+    <string name="empty_address">Empty Address</string>
+    <string name="autocomplete_hint">Search Address</string>
+</resources>
