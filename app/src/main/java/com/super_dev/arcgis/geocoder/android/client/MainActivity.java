@@ -39,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private Handler handler;
 
     private SuggestAdapter suggestAdapter;
+//    Data
+    List<Candidate> candidateListResult;
+    FindAddressListener findAddressListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
 
         final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_complete_edit_text);
         final TextView selectedText =  (TextView) findViewById(R.id.selected_address);
+        final TextView selectedLocationText =  (TextView) findViewById(R.id.selected_address_location);
 
+        candidateListResult = new ArrayList<>();
         final SuggestionUrlBuilder suggestionUrlBuilder = new SuggestionUrlBuilder();
         suggestionUrlBuilder.setCountryCode("SN");
         suggestionUrlBuilder.setF("json");
@@ -56,6 +61,19 @@ public class MainActivity extends AppCompatActivity {
         addressCandidateUrlBuilder.setCountryCode("SN");
         addressCandidateUrlBuilder.setF("json");
         addressCandidateUrlBuilder.setOutField("Match_addr,Addr_type");
+
+        findAddressListener = new FindAddressListener() {
+            @Override
+            public void success() {
+                for(Candidate c : candidateListResult) {
+                    String longitude =Double.toString(c.getLocation().getX());
+                    String latitude =Double.toString(c.getLocation().getY());
+                    String line = selectedLocationText.getText().toString() + getString(R.string.location_string_template, latitude, longitude);
+                    selectedLocationText.setText(line);
+
+                }
+            }
+        };
 
         //Setting up the adapter for AutoSuggest
         suggestAdapter = new SuggestAdapter(this,
@@ -72,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
                 String findAddressUrl = addressCandidateUrlBuilder.getFindAddressURL();
                 Log.e("FIND_ADDRESS",findAddressUrl);
                 makeFindAddressCandidates(findAddressUrl);
+
+
 
             }
         });
@@ -204,6 +224,9 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     Log.v("JSON", "EXC: " + e.getLocalizedMessage());
                 }
+
+                candidateListResult = candidateList;
+                findAddressListener.success();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -211,5 +234,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private interface FindAddressListener{
+        void success();
     }
 }
