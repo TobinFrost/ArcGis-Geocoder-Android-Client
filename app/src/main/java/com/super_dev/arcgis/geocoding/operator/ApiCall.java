@@ -1,15 +1,15 @@
 package com.super_dev.arcgis.geocoding.operator;
 
 import android.content.Context;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
+
+import java.util.Map;
 
 
 // Thanks to Truiton.com for this
@@ -45,8 +45,19 @@ public class ApiCall {
 
     public static void make(Context ctx, String url, Response.Listener<JSONObject>
             listener, Response.ErrorListener errorListener) {
-        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url,null,
+        JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url,null,
                 listener, errorListener);
-        ApiCall.getInstance(ctx).addToRequestQueue(stringRequest);
+        ApiCall.getInstance(ctx).addToRequestQueue(getRequest);
+    }
+
+    public static void makePost(Context ctx, String url, final Map<String, String> params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener){
+        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url,null,
+                listener, errorListener){
+            @Override
+            protected Map<String, String> getParams(){
+                return params;
+            }
+        };
+        ApiCall.getInstance(ctx).addToRequestQueue(postRequest);
     }
 }
