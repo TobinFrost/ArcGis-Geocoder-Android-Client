@@ -1,7 +1,6 @@
-package com.super_dev.arcgis.geocoding.operator;
+package com.super_dev.arcgis.operator;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;

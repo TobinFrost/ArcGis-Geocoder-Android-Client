@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import com.android.volley.VolleyError;
-import com.super_dev.arcgis.geocoding.operator.ApiCall;
+import com.super_dev.arcgis.operator.ApiCall;
 import com.super_dev.arcgis.oauth2.token.constants.Constants;
 import com.super_dev.arcgis.oauth2.token.interfaces.TokenGeneratorListener;
 

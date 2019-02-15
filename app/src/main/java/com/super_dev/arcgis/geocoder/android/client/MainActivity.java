@@ -21,7 +21,7 @@ import com.super_dev.arcgis.geocoding.find.address.Candidate;
 import com.super_dev.arcgis.geocoding.find.address.Extent;
 import com.super_dev.arcgis.geocoding.find.address.FindAddressCandidateUrlBuilder;
 import com.super_dev.arcgis.geocoding.find.address.Location;
-import com.super_dev.arcgis.geocoding.operator.ApiCall;
+import com.super_dev.arcgis.operator.ApiCall;
 import com.super_dev.arcgis.geocoding.suggestion.Suggestion;
 import com.super_dev.arcgis.geocoding.suggestion.SuggestionUrlBuilder;
 import com.super_dev.arcgis.oauth2.token.TokenGenerator;
