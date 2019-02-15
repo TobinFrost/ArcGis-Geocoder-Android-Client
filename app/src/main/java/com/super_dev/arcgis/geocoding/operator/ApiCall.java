@@ -1,14 +1,16 @@
 package com.super_dev.arcgis.geocoding.operator;
 
 import android.content.Context;
+import android.util.Log;
+
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONObject;
-
 import java.util.Map;
 
 
@@ -50,14 +52,20 @@ public class ApiCall {
         ApiCall.getInstance(ctx).addToRequestQueue(getRequest);
     }
 
-    public static void makePost(Context ctx, String url, final Map<String, String> params, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener){
-        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url,null,
-                listener, errorListener){
-            @Override
-            protected Map<String, String> getParams(){
-                return params;
+    public static void makePost(Context ctx, String url, final Map<String, String> params, Response.Listener<String> listener, Response.ErrorListener errorListener){
+
+            StringRequest postRequest = new StringRequest (Request.Method.POST, url,
+                    listener, errorListener)
+            {
+
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    return params;
+                }
             }
-        };
-        ApiCall.getInstance(ctx).addToRequestQueue(postRequest);
+            ;
+
+            ApiCall.getInstance(ctx).addToRequestQueue(postRequest);
+
     }
 }

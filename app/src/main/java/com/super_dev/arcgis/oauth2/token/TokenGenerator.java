@@ -3,11 +3,10 @@ package com.super_dev.arcgis.oauth2.token;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
-
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.super_dev.arcgis.geocoding.operator.ApiCall;
 import com.super_dev.arcgis.oauth2.token.constants.Constants;
+import com.super_dev.arcgis.oauth2.token.interfaces.TokenGeneratorListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,7 +25,7 @@ public class TokenGenerator {
     private final String grant_type = "client_credentials";
     private static Context mCtx;
     private Map<String, String> dataMap;
-    private static String url;
+    public static String url;
     private Response request_response;
 
     private static TokenGenerator mInstance;
@@ -57,27 +56,34 @@ public class TokenGenerator {
         return mInstance;
     }
 
-    public Response generate(){
+    public Map<String, String> getDataMap(){
+        return dataMap;
+    }
 
-        ApiCall.makePost(mCtx, url,dataMap, new com.android.volley.Response.Listener<JSONObject>() {
+    public Response generate(final TokenGeneratorListener generatorListener){
+
+        ApiCall.makePost(mCtx, url,dataMap, new com.android.volley.Response.Listener<String>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(String response) {
                 Response returnedResponse = new Response();
                 try {
-                String access_token = response.getString("access_token");
-                String expires_in = response.getString("expires_in");
-                returnedResponse.setAccess_token(access_token);
-                returnedResponse.setExpires_in(expires_in);
+                    JSONObject jsonResponse = new JSONObject(response);
+                    String access_token = jsonResponse.getString("access_token");
+                    String expires_in = jsonResponse.getString("expires_in");
+                    returnedResponse.setAccess_token(access_token);
+                    returnedResponse.setExpires_in(expires_in);
 
-                } catch (JSONException e) {
-                    Log.v("JSON", "EXC: " + e.getLocalizedMessage());
-                }
-                request_response = returnedResponse;
+                    } catch (JSONException e) {
+                        Log.v("JSON", "EXC: " + e.getLocalizedMessage());
+                    }
+                    request_response = returnedResponse;
+                    generatorListener.success(true,returnedResponse);
             }
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                generatorListener.success(false,null);
+                Log.e("API", "Err" + error.getLocalizedMessage());
             }
         });
 

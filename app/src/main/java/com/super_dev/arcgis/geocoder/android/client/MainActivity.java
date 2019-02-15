@@ -24,6 +24,8 @@ import com.super_dev.arcgis.geocoding.find.address.Location;
 import com.super_dev.arcgis.geocoding.operator.ApiCall;
 import com.super_dev.arcgis.geocoding.suggestion.Suggestion;
 import com.super_dev.arcgis.geocoding.suggestion.SuggestionUrlBuilder;
+import com.super_dev.arcgis.oauth2.token.TokenGenerator;
+import com.super_dev.arcgis.oauth2.token.interfaces.TokenGeneratorListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +49,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        String client_id = getString(R.string.arcgis_client_id_key);
+        String client_secret = getString(R.string.arcgis_client_secret_key);
+
+        TokenGeneratorListener generatorListener = new TokenGeneratorListener() {
+            @Override
+            public void success(Boolean success, TokenGenerator.Response response) {
+                Log.e("TOKEN_RESPONSE", response.getAccess_token());
+            }
+        };
+
+        TokenGenerator.getInstance(this, client_id, client_secret).generate(generatorListener);
+
 
         final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto_complete_edit_text);
         final TextView selectedText =  (TextView) findViewById(R.id.selected_address);

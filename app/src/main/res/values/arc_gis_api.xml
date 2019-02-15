@@ -1,0 +1,4 @@
+<resources>
+    <string name="arcgis_client_id_key" templateMergeStrategy="preserve" translatable="false">UpqRZecQlunSdhoO</string>
+    <string name="arcgis_client_secret_key" templateMergeStrategy="preserve" translatable="false">47b5dfcbc552440ca41687a7a01c6c20</string>
+</resources>
