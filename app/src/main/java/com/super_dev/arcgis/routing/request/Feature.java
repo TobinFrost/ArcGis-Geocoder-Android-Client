@@ -7,7 +7,7 @@ import android.os.Parcelable.Creator;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Feature implements Parcelable
+public class Feature extends SuperJSON implements Parcelable
 {
 
     @SerializedName("geometry")

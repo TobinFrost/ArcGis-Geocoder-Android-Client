@@ -4,10 +4,12 @@ package com.super_dev.arcgis.routing.request;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.Parcelable.Creator;
+
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Geometry implements Parcelable
+public class Geometry extends SuperJSON implements Parcelable
 {
 
     @SerializedName("x")
@@ -43,6 +45,7 @@ public class Geometry implements Parcelable
     }
 
     public Geometry() {
+        setSpatialReference(new SpatialReference());
     }
 
     public double getX() {
@@ -93,5 +96,6 @@ public class Geometry implements Parcelable
     public int describeContents() {
         return  0;
     }
+
 
 }

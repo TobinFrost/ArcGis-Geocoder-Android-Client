@@ -9,12 +9,14 @@ import android.os.Parcelable.Creator;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class FeatureRouteRequest implements Parcelable
+public class FeatureRouteRequest extends SuperJSON implements Parcelable
 {
+
+    private static FeatureRouteRequest mInstance;
 
     @SerializedName("type")
     @Expose
-    private String type;
+    private String type = "features";
     @SerializedName("features")
     @Expose
     private List<Feature> features = new ArrayList<Feature>();
@@ -77,5 +79,18 @@ public class FeatureRouteRequest implements Parcelable
     public int describeContents() {
         return  0;
     }
+
+    public static FeatureRouteRequest build(Geometry origin, Geometry destination) {
+        if (mInstance == null){
+            Feature origineFeature = new Feature().withGeometry(origin);
+            Feature destinationFeature = new Feature().withGeometry(destination);
+            mInstance = new FeatureRouteRequest();
+            mInstance.getFeatures().add(origineFeature);
+            mInstance.getFeatures().add(destinationFeature);
+        }
+
+        return mInstance;
+    }
+
 
 }

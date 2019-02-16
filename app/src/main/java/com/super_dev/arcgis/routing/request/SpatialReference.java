@@ -4,15 +4,17 @@ package com.super_dev.arcgis.routing.request;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.Parcelable.Creator;
+
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SpatialReference implements Parcelable
+public class SpatialReference extends SuperJSON implements Parcelable
 {
 
     @SerializedName("wkid")
     @Expose
-    private String wkid;
+    private String wkid = "4326";
     public final static Creator<SpatialReference> CREATOR = new Creator<SpatialReference>() {
 
 
@@ -57,5 +59,6 @@ public class SpatialReference implements Parcelable
     public int describeContents() {
         return  0;
     }
+
 
 }

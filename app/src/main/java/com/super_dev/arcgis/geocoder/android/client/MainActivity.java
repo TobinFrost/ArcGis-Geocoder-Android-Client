@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
@@ -26,6 +27,12 @@ import com.super_dev.arcgis.geocoding.suggestion.Suggestion;
 import com.super_dev.arcgis.geocoding.suggestion.SuggestionUrlBuilder;
 import com.super_dev.arcgis.oauth2.token.TokenGenerator;
 import com.super_dev.arcgis.oauth2.token.interfaces.TokenGeneratorListener;
+import com.super_dev.arcgis.routing.RouteGenerator;
+import com.super_dev.arcgis.routing.interfaces.RouteGeneratorListener;
+import com.super_dev.arcgis.routing.request.Feature;
+import com.super_dev.arcgis.routing.request.FeatureRouteRequest;
+import com.super_dev.arcgis.routing.request.Geometry;
+import com.super_dev.arcgis.routing.request.SpatialReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,14 +56,37 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final Geometry geo1 = new Geometry();
+        geo1.setX(-17.442919);
+        geo1.setY(14.742222);
+        final Geometry geo2 = new Geometry();
+        geo2.setX(-17.447874);
+        geo2.setY(14.674721);
+
+//        FeatureRouteRequest fRequest = FeatureRouteRequest.build(geo1,geo2);
+//
+//
+//        Log.e("REQUEST", fRequest.toJson());
+
+
 
         String client_id = getString(R.string.arcgis_client_id_key);
         String client_secret = getString(R.string.arcgis_client_secret_key);
+
+        final RouteGeneratorListener routeGeneratorListener = new RouteGeneratorListener() {
+            @Override
+            public void success(Boolean success, List<Pair<Double,Double>> response) {
+                Log.e("POLY_SIZE", response.size()+"");
+            }
+        };
+
 
         TokenGeneratorListener generatorListener = new TokenGeneratorListener() {
             @Override
             public void success(Boolean success, TokenGenerator.Response response) {
                 Log.e("TOKEN_RESPONSE", response.getAccess_token());
+                RouteGenerator.getInstance(MainActivity.this, response.getAccess_token()).generate(geo1,geo2, routeGeneratorListener);
+
             }
         };
 
